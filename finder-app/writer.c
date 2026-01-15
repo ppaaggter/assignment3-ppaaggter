@@ -1,13 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+#include <syslog.h>
 
 int main(int argc,char * argv[]){
 
 
 	char * ruta_del_archivo,* texto;
 	FILE * pFile;
+
+
+	openlog("Logs", LOG_ERR, LOG_USER);
+
+
 
 	if(argc!=3){
 		return EXIT_FAILURE;
@@ -21,22 +26,24 @@ int main(int argc,char * argv[]){
 
 	if(errno==0){
 
-		fputs (texto,pFile);
+		fputs(texto,pFile);
 
 		fclose(pFile);
 	}else if(errno==2 && errno==6){
-		printf("The file doesn't exist");
+
+		syslog(LOG_INFO, "The file doesn't exist");
 		return EXIT_FAILURE;
 	}else if(errno==13){
-		printf("Permisson denied");
+		syslog(LOG_INFO, "Permisson denied");
 		return EXIT_FAILURE;
 	}else{
-		printf("Something unexpected happens working with the file");
+		syslog(LOG_INFO, "Something unexpected happens working with the file");
 		return EXIT_FAILURE;
 	}
 
 
 
+	closelog();
 
 
 
